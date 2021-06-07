@@ -22,9 +22,10 @@ Banks:
 - [cURL](https://www.php.net/manual/en/book.curl.php)
 
 ## OSC Compatibles
-- PHP 5.6+
-- Magento 1.x
-- OpenMage
+- Inovarti Onestep Checkout
+- Firecheckout
+- Moip Checkout
+- Onepage
 
 > **Note: make the store backup before instalation.**
 
