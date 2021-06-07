@@ -1,0 +1,100 @@
+<div class="payment-method" data-bind="css: {'_active': (getCode() == isChecked())}">
+    <div class="payment-method-title field choice">
+        <input type="radio"
+               name="payment[method]"
+               class="radio"
+               data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: 
+isRadioButtonVisible()" />
+        <label data-bind="attr: {'for': getCode()}" class="label"><span data-bind="text: getTitle()"></span></label>
+    </div>
+    <div class="payment-method-content">
+        <!-- ko foreach: getRegion('messages') -->
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <!--/ko-->
+        <div class="payment-method-billing-address">
+            <!-- ko foreach: $parent.getRegion(getBillingAddressFormName()) -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+        </div>
+        <form class="form" id ="paymee-form" method="post">
+            <fieldset data-bind="attr: {class: 'fieldset payment items allbank ' + getCode(), id: 'payment_form_' + getCode()}">
+        
+                <div class="field _required">
+                    <label data-bind="attr: {for: getCode() + '_cpf'}" class="label">
+                        <span><!-- ko i18n: 'CPF'--><!-- /ko --></span>
+                    </label>
+                    <div class="control">
+                        <input id="paymee_document" aria-required="true"  type="text" name="payment[cpf]" class="input-text" value=""
+                            data-bind="attr: {
+                                                id: getCode() + '_cpf',
+                                                title: $t('Account Owner'),
+                                                'data-container': getCode() + '-cpf',
+                                                'data-validate': JSON.stringify({'required':true})},
+                                                valueUpdate: 'keyup' "/>
+                    </div>
+                </div>
+                <div class="field _required">
+                    <label data-bind="attr: {for: getCode() + '_banco'}" class="label">
+                        <span><!-- ko i18n: 'Banco'--><!-- /ko --></span>
+                    </label>
+                    <div class="control">
+                        <select name="banco" 
+                                class="select select-banco" 
+                                data-bind="attr: {id: getCode() + '_banco', 'data-container': getCode() + '-banco', 'data-validate': JSON.stringify({'required':true})}, 
+                                options: getBancos(), optionsText: 'banco', optionsValue: 'value' ">
+                        </select>
+                    </div>
+                </div>
+                <div class="field _required">
+                    <label data-bind="attr: {for: getCode() + '_branch'}" class="label">
+                        <span><!-- ko i18n: 'Agência'--><!-- /ko --></span>
+                    </label>
+                    <div class="control">
+                        <input id="paymee_branch" aria-required="true"  type="text" name="payment[branch]" class="input-text" value=""
+                        data-bind="attr: {
+                                    id: getCode() + '_branch',
+                                    title: $t('Account Owner'),
+                                    'data-container': getCode() + '-branch',
+                                    'data-validate': JSON.stringify({'required':true})},
+                                    valueUpdate: 'keyup' "/>
+                    </div>
+                </div>
+                <div class="field _required">
+                    <label data-bind="attr: {for: getCode() + '_account'}" class="label">
+                        <span><!-- ko i18n: 'Conta'--><!-- /ko --></span>
+                    </label>
+                    <div class="control">
+                        <input id="paymee_account" aria-required="true" type="text" name="payment[account]" class="input-text" 
+                        value=""
+                        data-bind="attr: {
+                                    id: getCode() + '_account',
+                                    title: $t('Account Owner'),
+                                    'data-container': getCode() + '-account',
+                                    'data-validate': JSON.stringify({'required':true})},
+                                    valueUpdate: 'keyup' "/>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+        <div class="checkout-agreements-block">
+            <!-- ko foreach: $parent.getRegion('before-place-order') -->
+                <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+        </div>
+        <div class="actions-toolbar">
+            <div class="primary">
+                <button class="action primary checkout"
+                        type="submit"
+                        data-bind="
+                        click: placeOrder,
+                        attr: {'title': $t('Place Order')},
+                        enable: (getCode() == isChecked()),
+                        css: {disabled: !isPlaceOrderActionAllowed()}
+                        "
+                        disabled>
+                    <span data-bind="i18n: 'Place Order'"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

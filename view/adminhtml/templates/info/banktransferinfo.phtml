@@ -1,0 +1,29 @@
+<?php
+use Magento\OfflinePayments\Model\Banktransfer;
+$payment = $block->getOrder()->getPayment();
+$method = $payment->getMethodInstance()->getCode();
+?>
+<?php if ($method == Banktransfer::PAYMENT_METHOD_BANKTRANSFER_CODE) :?>
+<div class="admin__page-section-item-content">
+    <strong><?php echo __('CPF;') ?></strong>
+	<!-- from here -->
+	<span class="price"><?php print_r($payment->getAdditionalInformation('cpf'));?></span>
+	<!-- end here -->
+
+	<strong><?php echo __('Código do banco:') ?></strong>
+	<!-- from here -->
+	<span class="price"><?php print_r($payment->getAdditionalInformation('banco'));?></span>
+	<!-- end here -->
+
+	<strong><?php echo __('Branch:') ?></strong>
+	<!-- from here -->
+	<span class="price"><?php print_r($payment->getAdditionalInformation('branch'));?></span>
+	<!-- end here -->
+
+	<strong><?php echo __('Conta:') ?></strong>
+	<!-- from here -->
+	<span class="price"><?php print_r($payment->getAdditionalInformation('account'));?></span>
+	<!-- end here -->
+</div>
+<?php endif; ?>
+

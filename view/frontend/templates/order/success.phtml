@@ -1,0 +1,127 @@
+<style type="text/css">
+.payment-method #co-payment-form .paymee-method input,
+.payment-method #co-payment-form .paymee-method select
+{
+    display: none;
+}
+.checkout-onepage-success #payment_form_JuniorMaia_paymee div {
+    margin: 15px auto;
+  }
+  .checkout-onepage-success .paymee-instructions .instructions ul {
+    list-style: none;
+    text-align: left;
+    list-style-position: inside;
+  }
+  .checkout-onepage-success .paymee-instructions .instructions {
+    width: 100%;
+    margin: 0 auto;
+  }
+  .checkout-onepage-success .paymee-instructions .instructions ul li {
+    margin: 10px 0;
+  }
+  .checkout-onepage-success .paymee-instructions .instructions p {
+    text-align: left;
+  }
+  .checkout-onepage-success .buttons-set {
+    clear: both;
+    margin: 10px 0 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ededed;
+    text-align: right;
+  }
+  .checkout-onepage-success .advice {
+    width: 100%;
+    margin: 0 auto;
+    text-align: left;
+  }
+  .checkout-onepage-success .instruction strong {
+    display: block;
+  }
+  .checkout-onepage-success .campos label {
+    float: left;
+    color: grey;
+  }
+  .checkout-onepage-success .campos .campo {
+    float: none;
+    display: block;
+    border: 1px solid rgb(179, 179, 179)
+  }
+  .checkout-onepage-success .campos select.campo{
+    border-radius: 5px;
+    height: 30px;
+    padding: 0 15px;
+  }
+  .checkout-onepage-success .campos input.campo{
+    border-radius: 5px;
+  }
+  .checkout-onepage-success .campos label{
+    float: none;
+    display: block;
+    clear: both;
+    margin-bottom: 5px;
+  }
+  .checkout-onepage-success .campos .campo-dupla {
+    float: left;
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 20px;
+  }
+  .checkout-onepage-success .campos .campo-dupla > div {
+    float: left;
+    margin-right: 10%;
+    width: 30%;
+}
+</style>
+<?php 
+
+$order = $block->getOrder();
+$payment = $order->getPayment();
+$method = $payment->getMethodInstance();
+$methodTitle = $method->getTitle();
+?>
+<div class="checkout-success">
+<?php if($order->getIncrementId()):?>
+    <?php if ($block->getCustomerId()) :?>
+        <p><?php echo __('Your order number is: '.$order->getIncrementId()) ?>
+        </p>
+        <?php  else :?>
+            <p><?php echo __('Your order # is: <span>%1</span>.',$order->getIncrementId()) ?></p>
+        <?php endif;?>
+        <p><?php echo __('Você escolheu a forma de pgto Paymee, agora preencha as informações abaixo para finalizar sua compra') ?></p>
+<?php endif;
+$params = $block->getRequest()->getParams();
+if(isset($params['nofill'])){
+    echo '<span style="color: red">Por favor, preencha todos os dados antes de continuar</span>';
+}
+?>
+</div>
+
+<div class="paymee-instructions">
+    <?php
+    $instructions_name = $payment->getAdditionalInformation('instructions_name'); 
+    $instructions_beneficiary_branch = $payment->getAdditionalInformation('instructions_beneficiary_branch'); 
+    $instructions_beneficiary_account = $payment->getAdditionalInformation('instructions_beneficiary_account'); 
+    $instructions_beneficiary_name = $payment->getAdditionalInformation('instructions_beneficiary_name'); 
+    $instructions_beneficiary_url = $payment->getAdditionalInformation('instructions_beneficiary_url'); 
+    $amount = $payment->getAdditionalInformation('instructions_beneficiary_value'); 
+    
+    if(isset($instructions_name) && $instructions_name != null) : ?>
+
+        <div class="instructions">
+            <p><strong><h1>Dados para transferência</h1></strong></p>
+            <ul>
+                <li><span>Banco: <strong><?php echo $instructions_name ?></strong></span></li>
+                <li><span>Agência: <strong><?php echo $instructions_beneficiary_branch ?></strong></span></li>
+                <li><span>Conta-Corrente: <strong><?php echo $instructions_beneficiary_account ?></strong></span></li>
+                <li><span>Favorecido: <strong><?php echo $instructions_beneficiary_name ?></strong></span></li>
+                <li><span>Valor: <strong>R$ <?php echo $amount ?></strong></span></li>
+            </ul>
+        </div>
+        <div class="advice">
+            <span>Realize a transferência bancária no valor exato do seu pedido.</span>
+        </div>
+        <div>
+            <a target="_blank" type="button" class="button" title="Transferir Agora" href='<?php echo $instructions_beneficiary_url ?>'"><span><span>Transferir Agora</span></span></a>
+        </div>
+    <?php endif ?>
+</div>

@@ -1,0 +1,51 @@
+<style type="text/css">
+    a.button{
+        background-image: none;
+        background: #eee;
+        border: 1px solid #ccc;
+        color: #333;
+        cursor: pointer;
+        display: inline-block;
+        font-family: 'Open Sans','Helvetica Neue',Helvetica,Arial,sans-serif;
+        font-weight: 600;
+        margin: 0;
+        padding: 7px 15px;
+        font-size: 1.4rem;
+        line-height: 1.6rem;
+        box-sizing: border-box;
+        vertical-align: middle;
+        cursor: pointer;
+        text-decoration: none;
+    }
+</style>
+<div class="paymee-instructions">
+    <?php $paymeeInstructions = $block->getPaymeeInstructions(); ?>
+    <?php 
+    $responsePaymeeJson = $paymeeInstructions;
+    $responsePaymee = json_decode($responsePaymeeJson, true);
+    ?>
+    <?php if(!empty($responsePaymee)) : ?>
+
+        <div class="instructions">
+            <?php
+               $body =  $responsePaymee['response'];
+               $steps = $body['instructions']['steps'];
+               $transactionURL = $body['instructions']['redirect_urls']['desktop'];
+            ?>
+            <p><strong><h1>Dados para transferência</h1></strong></p>
+            <ul>
+                <li><span>Banco: <strong><?php echo $body['instructions']['name'] ?></strong></span></li>
+                <li><span>Agência: <strong><?php echo $body['instructions']['beneficiary_branch'] ?></strong></span></li>
+                <li><span>Conta-Corrente: <strong><?php echo $body['instructions']['beneficiary_account'] ?></strong></span></li>
+                <li><span>Favorecido: <strong><?php echo $body['instructions']['beneficiary_name'] ?></strong></span></li>
+                <li><span>Valor: <strong>R$ <?php echo number_format($body['amount'], 2, ',', '.') ?></strong></span></li>
+            </ul>
+        </div>
+        <div class="advice">
+            <span>Realize a transferência bancária no valor exato do seu pedido.</span>
+        </div>
+        <div class="buttons-set">
+            <a type="button" target="_blank" class="button" title="Transferir Agora" href="<?php echo $transactionURL ?>"><span><span>Transferir Agora</span></span></a>
+        </div>
+<?php endif; ?>
+</div>
