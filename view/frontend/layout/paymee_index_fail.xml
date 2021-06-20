@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
-    <head>
-        <css src="css/styles.css" />
-    </head>
-    <referenceContainer name="content">
-        <block class="JuniorMaia\Paymee\Block\Index" name="paymee_index_index" template="JuniorMaia_Paymee::fail.phtml" />
-    </referenceContainer>
-</page>
