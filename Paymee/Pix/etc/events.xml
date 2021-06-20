@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_order_payment_save_before">
+        <observer name="save_pix_infos" instance="Paymee\Pix\Observer\SavePixInfoToOrderObserver"/>
+    </event>
+	<event name="adminhtml_sales_order_creditmemo_register_before">
+        <observer name="save_pix_infos" instance="Paymee\Pix\Observer\refundOrder"/>
+    </event>
+
+
+</config>

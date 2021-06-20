@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<page>
+     <head>
+        <css src="css/styles.css" />
+        <script src="Paymee_Pix::js/custom.js"/>
+    </head>
+    <referenceContainer name="content">
+        <block class="Paymee\Pix\Block\Success" name="paymeepix.details.success" template="Paymee_Pix::order/success.phtml" after="-">        	
+        </block>
+    </referenceContainer>
+    <referenceBlock name="checkout.success" remove="true"/>
+</page>

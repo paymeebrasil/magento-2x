@@ -1,0 +1,77 @@
+.payment-method #co-payment-form .paymee-method input,
+.payment-method #co-payment-form .paymee-method select
+{
+    display: none;
+}
+.checkout-onepage-success #payment_form_Paymee_paymee div {
+    margin: 15px auto;
+  }
+  .checkout-onepage-success .paymee-instructions .instructions ul {
+    list-style: none;
+    text-align: left;
+    list-style-position: inside;
+  }
+  .checkout-onepage-success .paymee-instructions .instructions {
+    width: 500px;
+    margin: 0 auto;
+  }
+  .checkout-onepage-success .paymee-instructions .instructions ul li {
+    margin: 10px 0;
+  }
+  .checkout-onepage-success .paymee-instructions .instructions p {
+    text-align: left;
+  }
+  .checkout-onepage-success .buttons-set {
+    clear: both;
+    margin: 10px 0 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ededed;
+    text-align: right;
+  }
+  .checkout-onepage-success .advice {
+    width: 500px;
+    margin: 0 auto;
+    text-align: left;
+  }
+  .checkout-onepage-success .instruction strong {
+    display: block;
+  }
+  .checkout-onepage-success .campos label {
+    float: left;
+    color: grey;
+  }
+  .checkout-onepage-success .campos .campo {
+    float: none;
+    display: block;
+    border: 1px solid rgb(179, 179, 179)
+  }
+  .checkout-onepage-success .campos select.campo{
+    border-radius: 5px;
+    height: 30px;
+    padding: 0 15px;
+  }
+  .checkout-onepage-success .campos input.campo{
+    border-radius: 5px;
+  }
+  .checkout-onepage-success .campos label{
+    float: none;
+    display: block;
+    clear: both;
+    margin-bottom: 5px;
+  }
+  .checkout-onepage-success .campos .campo-dupla {
+    float: left;
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 20px;
+  }
+  .checkout-onepage-success .campos .campo-dupla div {
+    float: left;
+    margin-right: 5%;
+    width: 40%;
+  }
+  .checkout-index-index .campo-dupla {
+
+    display: none;
+
+}
