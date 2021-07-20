@@ -2,8 +2,8 @@
 <payment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Payment:etc/payment.xsd">
     <groups>
-        <group id="paymeepix_group">
-            <label>Pix</label>
+        <group id="paymee_group">
+            <label>PayMee</label>
         </group>
     </groups>
     <methods>
