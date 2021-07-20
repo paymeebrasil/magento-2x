@@ -3,7 +3,7 @@
          xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Payment:etc/payment.xsd">
     <groups>
         <group id="paymee_group">
-            <label>Transferencia</label>
+            <label>PayMee</label>
         </group>
     </groups>
     <methods>
