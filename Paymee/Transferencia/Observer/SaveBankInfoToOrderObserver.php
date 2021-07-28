@@ -99,8 +99,9 @@ class SaveBankInfoToOrderObserver implements ObserverInterface {
     }
 
     public function execute(EventObserver $observer) {
-        $inputParams = $this->_inputParamsResolver->resolve();
-        if($this->_state->getAreaCode() != \Magento\Framework\App\Area::AREA_ADMINHTML){
+        if ($this->_state->getAreaCode() != \Magento\Framework\App\Area::AREA_ADMINHTML) {
+            $inputParams = $this->_inputParamsResolver->resolve();
+
             foreach ($inputParams as $inputParam) {
         
                 
