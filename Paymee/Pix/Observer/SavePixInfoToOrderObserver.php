@@ -55,6 +55,11 @@ class SavePixInfoToOrderObserver implements ObserverInterface {
         }
     }
 
+    public function getDiscriminator(){
+        $storeScope = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
+        return $this->scopeConfig->getValue('payment/paymeepix/discriminator', $storeScope);
+    }
+
     public function execute(EventObserver $observer) {
 
         $this->logger->debug('Chamou paymee pix integration');
@@ -121,6 +126,7 @@ class SavePixInfoToOrderObserver implements ObserverInterface {
                             "amount" => (float)$amount,
                             "referenceCode" => $referenceCode,
                             "maxAge" => $timeMinutes,
+                            "discriminator" => $this->getDiscriminator(),
                             "paymentMethod" => "PIX",
                             "callbackURL" => $this->_urlInterface->getUrl('paymeepix/callback/index/'),
                             "shopper" => array(

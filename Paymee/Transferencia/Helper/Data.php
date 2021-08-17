@@ -7,6 +7,7 @@ class Data extends AbstractHelper
     
     CONST merchant_gateway_key = "payment/paymee/key";
     CONST merchant_gateway_token = "payment/paymee/token";
+    CONST merchant_discriminator = "payment/paymee/discriminator";
     CONST debug = "payment/paymee/debug";
     
     public function RandomFunc()
@@ -41,5 +42,10 @@ class Data extends AbstractHelper
         } else{
             return 'prod';
         }
+    }
+
+    public function getDiscriminator(){
+        $storeScope = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
+        return $this->scopeConfig->getValue(self::merchant_discriminator, $storeScope);
     }
 }

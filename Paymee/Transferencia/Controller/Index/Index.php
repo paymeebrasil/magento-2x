@@ -121,6 +121,7 @@ class Index extends \Magento\Framework\App\Action\Action
             "amount" => (float)$amount,
             "referenceCode" => $referenceCode,
             "maxAge" => $timeMinutes,
+            "discriminator" => $this->helper->getDiscriminator(),
             "paymentMethod" => $paymentMethod,
             "callbackURL" => $url.'paymee/index/callback/',
             "shopper" => [
