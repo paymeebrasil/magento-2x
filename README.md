@@ -36,7 +36,7 @@ Banks:
     $ php bin/magento cache:clean;
     $ php bin/magento cache:flush;   
 
-## Callback URL
+## Callback PIX URL
 	$ domain.com.br/paymeepix/index/callback
 
 ## API Reference
