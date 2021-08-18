@@ -50,10 +50,8 @@ class Callback extends \Magento\Framework\App\Action\Action
         $this->_logger->debug($paymentStatus);
        if($paymentStatus == true && $incrementId) {
             try{
-                $orderState = Order::STATE_COMPLETE;
-                $order->setState($orderState)->setStatus(Order::STATE_COMPLETE);
-                $this->_logger->debug($order->getId());
-                $order->save();
+                $order = $this->order->loadByIncrementId($incrementId);
+                $order->setState(Order::STATE_PROCESSING, true)->save();
                 var_dump(http_response_code(200));
                 http_response_code(200);
             } catch(Exception $e) {
