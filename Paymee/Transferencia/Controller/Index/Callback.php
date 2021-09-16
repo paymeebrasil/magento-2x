@@ -33,7 +33,6 @@ class Callback extends \Magento\Framework\App\Action\Action
         $this->credentials = $this->helper->_getCredenciais();
         $this->env = $this->helper->_getEnv();
         $contents = file_get_contents('php://input');
-        //$contents = '{"saleToken":"ff66b277-7d76-3a4c-970c-4a50a43fb1ad","referenceCode":"35","currency":"BRL","amount":305.00,"shopper":{"fullName":"nome sobrenome","firstName":"nome","lastName":"sobrenome","email":"andre@Paymee.com.br","cpf":"35313621866","agency":"0000","account":"000000-1"},"date":null,"newStatus":"PAID"} ';
         $this->_logger->debug($contents);
         $date = date("YmdHis");
         $paymentStatus = $this->checkTransactionStatus(json_decode($contents));
@@ -42,15 +41,11 @@ class Callback extends \Magento\Framework\App\Action\Action
         $email = explode('"email":"', $contents);
         $email = explode('","cpf"', $email[1]);
         $incrementId = (int)$referenceCodeReal[0];
-        $this->_logger->debug($incrementId);
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $order = $objectManager->create('Magento\Sales\Model\Order')->loadByIncrementId($incrementId);
-        $this->_logger->debug($order->getId());
-        $this->_logger->debug($incrementId);
-        $this->_logger->debug($paymentStatus);
+        
        if($paymentStatus == true && $incrementId) {
             try{
-                $order = $this->order->loadByIncrementId($incrementId);
                 $order->setState(Order::STATE_PROCESSING, true)->save();
                 var_dump(http_response_code(200));
                 http_response_code(200);
