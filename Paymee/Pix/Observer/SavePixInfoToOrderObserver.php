@@ -64,7 +64,9 @@ class SavePixInfoToOrderObserver implements ObserverInterface {
 
         $this->logger->debug('Chamou paymee pix integration');
 
-        if ($this->_state->getAreaCode() === \Magento\Framework\App\Area::AREA_WEBAPI_REST) {
+        //if ($this->_state->getAreaCode() === \Magento\Framework\App\Area::AREA_WEBAPI_REST) {
+        if ($this->_state->getAreaCode() != \Magento\Framework\App\Area::AREA_ADMINHTML) {
+            
             $inputParams = $this->_inputParamsResolver->resolve();
 
             foreach ($inputParams as $inputParam) {

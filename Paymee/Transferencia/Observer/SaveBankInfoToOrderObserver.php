@@ -99,7 +99,12 @@ class SaveBankInfoToOrderObserver implements ObserverInterface {
     }
 
     public function execute(EventObserver $observer) {
-        if ($this->_state->getAreaCode() === \Magento\Framework\App\Area::AREA_WEBAPI_REST) {
+
+        $this->logger->debug('Chamou paymee transfer integration');
+
+        //if ($this->_state->getAreaCode() === \Magento\Framework\App\Area::AREA_WEBAPI_REST) {
+        if ($this->_state->getAreaCode() != \Magento\Framework\App\Area::AREA_ADMINHTML) {
+
             $inputParams = $this->_inputParamsResolver->resolve();
 
             foreach ($inputParams as $inputParam) {
