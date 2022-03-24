@@ -1,9 +1,0 @@
-
-<div class="paymeepix-instructions">
-    <?php $paymeeInstructions = $block->getPixInstructions(); ?>
-    <?php 
-    $responsePixJson = $paymeeInstructions;
-    $responsePix = json_decode($responsePixJson, true);
-    echo $responsePix;
-    ?>
-</div>

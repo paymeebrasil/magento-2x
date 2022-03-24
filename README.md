@@ -20,27 +20,18 @@ Banks:
 - [PHP 7.0+](https://www.php.net)
 - [Magento 2.x](https://magento.com/tech-resources/download)
 
-## OSC Compatibles
-- Inovarti Onestep Checkout
-- Firecheckout
-- Moip Checkout
-- Onepage
+## Instalation
+    Download files from this repository
+    Create in your store root the folder: app/code/Paymee/Core/
+    Paste all files and folders 
 
-## Git Instalation
-    $ git clone https://github.com/paymeebrasil/magento-2x.git ~/paymee
-    $ cp -r ~/paymee/* /dir/magento2x/app/code
+    Run commands:
     $ rm -rf pub/static/*
     $ php bin/magento setup:upgrade;
     $ php bin/magento setup:di:compile;
     $ php bin/magento setup:static-content:deploy -f
     $ php bin/magento cache:clean;
     $ php bin/magento cache:flush;   
-
-## Callback PIX Url
-	$ domain.com.br/paymeepix/index/callback
-
-## Callback Transfer Url
-	$ domain.com.br/paymee/index/callback
 
 ## API Reference
 https://documenter.getpostman.com/view/3199663/RWM6zDGc?version=latest

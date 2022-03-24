@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Paymee_Core::css/paymee.css" />
+        <script src="Paymee_Core::js/paymee.js"/>
+    </head>
+    <body>
+        <referenceContainer name="page.messages">
+            <block class="Magento\Framework\View\Element\Messages" name="messages" as="messages"/>
+        </referenceContainer>
+        <referenceContainer name="content">
+            <block class="Paymee\Core\Block\Checkout\Success" name="paymee_checkout_success" cacheable="false"/>
+        </referenceContainer>
+    </body>
+</page>

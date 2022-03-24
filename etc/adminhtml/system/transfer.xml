@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
+    <group id="paymee_transfer" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+        <label>Paymee Transferência</label>
+        <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+            <label>Habilitado</label>
+            <config_path>payment/paymee_transfer/active</config_path>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
+        <field id="title" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Título</label>
+            <config_path>payment/paymee_transfer/title</config_path>
+        </field>
+        <field id="order_status" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+            <label>Status do Pedido</label>
+            <config_path>payment/paymee_transfer/order_status</config_path>
+            <source_model>Paymee\Core\Model\Config\Source\Order\Status\Pendingpayment</source_model>
+        </field>
+        <field id="max_age" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>maxAge</label>
+            <config_path>payment/paymee_transfer/max_age</config_path>
+            <comment><![CDATA[Sale max age in minutes]]></comment>
+        </field>
+        <field id="allowspecific" translate="label" type="allowspecific" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+            <label>Permitidos em Países</label>
+            <config_path>payment/paymee_transfer/allowspecific</config_path>
+            <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
+        </field>
+        <field id="specificcountry" translate="label" type="multiselect" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+            <label>Países Específicos</label>
+            <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+            <can_be_empty>1</can_be_empty>
+            <config_path>payment/paymee_transfer/specificcountry</config_path>
+        </field>
+        <field id="instructions" translate="label" type="textarea" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Instruções</label>
+            <config_path>payment/paymee_transfer/instructions</config_path>
+        </field>
+        <field id="sort_order" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
+            <label>Ordenação</label>
+            <frontend_class>validate-number</frontend_class>
+            <config_path>payment/paymee_transfer/sort_order</config_path>
+        </field>
+    </group>
+</include>

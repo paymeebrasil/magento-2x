@@ -1,0 +1,15 @@
+<?php
+$method     = $this->getMethod();
+$qrCodeImg  = $this->getPixImg();
+$qrCodeCopy = $this->getPixCopy();
+?>
+
+<span><strong><?php echo __($this->getTitle()) ?></strong></span>
+
+<?php if ($method == "paymee_pix"): ?>
+    <hr />
+    <div style="">
+        <img width="150" style="margin-bottom: 10px" src="<?= $qrCodeImg; ?>" />
+        <span style="word-wrap: break-word;"><?= $qrCodeCopy; ?></span>
+    </div>
+<?php endif; ?>

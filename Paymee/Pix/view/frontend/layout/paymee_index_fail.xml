@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
-    <head>
-        <css src="css/styles.css" />
-    </head>
-    <referenceContainer name="content">
-        <block class="Paymee\Pix\Block\Index" name="paymeepix_index_index" template="Paymee_Pix::fail.phtml" />
-    </referenceContainer>
-</page>

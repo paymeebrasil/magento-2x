@@ -1,0 +1,13 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="payment">
+            <group id="paymee_configurations" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Paymee Pagamentos</label>
+                <include path="Paymee_Core::system/preferences.xml"/>
+                <include path="Paymee_Core::system/pix.xml"/>
+                <include path="Paymee_Core::system/boleto.xml"/>
+                <include path="Paymee_Core::system/transfer.xml"/>
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,117 @@
+<?php
+/**
+ * @var  \IoPay\Core\Block\Checkout\Success $block
+ */
+$order          = $this->getOrder();
+$total          = $this->getTotal();
+$payment        = $this->getPayment();
+$payment_method = $this->getPaymentMethod();
+$myOrders       = $this->getUrl("sales/order/view/order_id/{$order->getId()}");
+$grandTotal     = $this->getOrderTotalCurrency();
+$checkPixUrl    = $this->getPaymeeUrlPixStatus();
+?>
+
+<input type="text" class="paymee-textBox" value="<?php echo $payment_method; ?>" id="paymee-method">
+<input type="text" class="paymee-textBox" value="<?php echo $checkPixUrl; ?>" id="paymee-url">
+
+<?php if ($payment_method == 'paymee_pix'):?>
+    <?php
+    $qrCodeImg           = $payment->getAdditionalInformation("paymeeQrCodeImg");
+    $qrCodeCopy          = $payment->getAdditionalInformation("paymeeQrCodeCopy");
+    $uuid                = $payment->getAdditionalInformation("paymeeUuid");
+    ?>
+    <div class="payment-pix">
+
+        <input type="text" class="paymee-textBox" value="<?php echo $qrCodeCopy; ?>" id="plain">
+        <input type="text" class="paymee-textBox" value="<?php echo $uuid; ?>" id="uuid">
+
+        <div class="container" id="container">
+            <div class="box">
+                <h1>Pagamento via PIX</h1>
+            </div>
+
+            <div class="box">
+                <img src="https://www.bcb.gov.br/content/estabilidadefinanceira/piximg/logo_pix.png" class="paymee-img-pix" width="180" height="64"/>
+            </div>
+
+            <div class="box">
+                <span class="tempo" id="tempo"></span>
+            </div>
+
+            <div class="box">
+                <img id='barcode' class="paymee-img-qr" src="<?php echo $qrCodeImg; ?>" title="PayMee" width="200" height="200" />
+            </div>
+
+            <div class="box">
+                <span class="title"><strong>Escaneie o código com o seu celular</strong></span>
+            </div>
+            <div class="box">
+                <span class="subtitles">Abra o app do seu banco no celular, escolha Pix e aponte a câmera para o código</span>
+            </div>
+            <div class="box">
+                <button class="btn btn-paymee" data-clipboard-text="<?php echo $qrCodeCopy; ?>">
+                    Copiar Código
+                </button>
+            </div>
+        </div>
+
+        <div class="alert" id="alert">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            <strong>Sucesso!</strong> Seu pagamento com PIX foi realizado!
+        </div>
+    </div>
+<?php endif;?>
+
+<?php if ($payment_method == 'paymee_transfer'):?>
+    <div class="paymee-instructions">
+        <?php
+        $instructions_name = $payment->getAdditionalInformation('instructions_name');
+        $instructions_beneficiary_branch = $payment->getAdditionalInformation('instructions_beneficiary_branch');
+        $instructions_beneficiary_account = $payment->getAdditionalInformation('instructions_beneficiary_account');
+        $instructions_beneficiary_name = $payment->getAdditionalInformation('instructions_beneficiary_name');
+        $instructions_beneficiary_url = $payment->getAdditionalInformation('instructions_beneficiary_url');
+        $amount = $payment->getAdditionalInformation('instructions_beneficiary_value');
+
+        if(isset($instructions_name) && $instructions_name != null) : ?>
+            <div class="instructions">
+                <p><strong><h1>Dados para Transferência</h1></strong></p>
+                <ul>
+                    <li><span>Banco: <strong><?php echo $instructions_name ?></strong></span></li>
+                    <li><span>Agência: <strong><?php echo $instructions_beneficiary_branch ?></strong></span></li>
+                    <li><span>Conta-Corrente: <strong><?php echo $instructions_beneficiary_account ?></strong></span></li>
+                    <li><span>Favorecido: <strong><?php echo $instructions_beneficiary_name ?></strong></span></li>
+                    <li><span>Valor: <strong>R$ <?php echo $amount ?></strong></span></li>
+                </ul>
+            </div>
+            <div class="advice">
+                <span>Realize a transferência bancária no valor exato do seu pedido.</span>
+            </div>
+            <div class="advice">
+                <a target="_blank" type="button" class="button" title="Transferir Agora" href='<?php echo $instructions_beneficiary_url ?>'"><span><span>Transferir Agora</span></span></a>
+            </div>
+        <?php endif ?>
+    </div>
+<?php endif ?>
+
+<script type="text/javascript">
+    require(['jquery', 'clipboard'],function($, ClipboardJS){
+        (function($) {
+            $(window).load(function () {
+                var _clipboard = new ClipboardJS('.btn-paymee');
+
+                _clipboard.on('success', function(e) {
+                    console.info('Action:', e.action);
+                    console.info('Text:', e.text);
+                    console.info('Trigger:', e.trigger);
+                    alert('Código de pagamento copiado com sucesso!');
+                    e.clearSelection();
+                });
+
+                _clipboard.on('error', function(e) {
+                    console.error('Action:', e.action);
+                    console.error('Trigger:', e.trigger);
+                });
+            });
+        })(jQuery);
+    });
+</script>

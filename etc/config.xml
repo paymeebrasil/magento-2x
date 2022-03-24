@@ -1,0 +1,45 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../Store/etc/config.xsd">
+    <default>
+        <payment>
+            <paymee_pix>
+                <active>1</active>
+                <model>Paymee\Core\Model\Payment\Pix</model>
+                <title>Paymee Pix</title>
+                <order_status>pending_payment</order_status>
+                <max_age>120</max_age>
+                <instructions>- Para visualizar o QRCode de pagamento, conclua a compra.</instructions>
+                <allowspecific>0</allowspecific>
+                <sort_order>1</sort_order>
+                <payment_action>authorize</payment_action>
+                <cctypes>AE,VI,MC,DI,JCB</cctypes>
+            </paymee_pix>
+
+            <paymee_boleto>
+                <active>0</active>
+                <model>Paymee\Core\Model\Payment\Boleto</model>
+                <title>Paymee Boleto Parcelado</title>
+                <order_status>pending_payment</order_status>
+                <max_age>1440</max_age>
+                <instructions>- Não receber após vencimento.
+                    - Após finalizar o pedido envie a documentação necessária.
+                    - Para maiores detalhes e 2 via do boleto acesse o histórico do seu pedido.</instructions>
+                <allowspecific>0</allowspecific>
+                <sort_order>2</sort_order>
+                <payment_action>authorize</payment_action>
+                <cctypes>AE,VI,MC,DI,JCB</cctypes>
+            </paymee_boleto>
+
+            <paymee_transfer>
+                <active>1</active>
+                <model>Paymee\Core\Model\Payment\Transfer</model>
+                <title>Paymee Transferência</title>
+                <order_status>pending_payment</order_status>
+                <max_age>1440</max_age>
+                <allowspecific>0</allowspecific>
+                <sort_order>3</sort_order>
+                <payment_action>authorize</payment_action>
+                <cctypes>AE,VI,MC,DI,JCB</cctypes>
+            </paymee_transfer>
+        </payment>
+    </default>
+</config>

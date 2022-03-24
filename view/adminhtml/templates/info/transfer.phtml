@@ -1,0 +1,20 @@
+<?php
+$instructions_name = $this->getInfo()->getAdditionalInformation('instructions_name');
+$instructions_beneficiary_branch = $this->getInfo()->getAdditionalInformation('instructions_beneficiary_branch');
+$instructions_beneficiary_account = $this->getInfo()->getAdditionalInformation('instructions_beneficiary_account');
+$instructions_beneficiary_name = $this->getInfo()->getAdditionalInformation('instructions_beneficiary_name');
+$instructions_beneficiary_url = $this->getInfo()->getAdditionalInformation('instructions_beneficiary_url');
+$amount = $this->getInfo()->getAdditionalInformation('instructions_beneficiary_value');
+?>
+<?php if(isset($instructions_name) && $instructions_name != null) : ?>
+    <div class="instructions">
+        <p><strong><span><?php echo __($this->getTitle()) ?></span></strong></p>
+        <p><span>Banco: <strong><?php echo $instructions_name ?></strong></span></p>
+        <p><span>Agência: <strong><?php echo $instructions_beneficiary_branch ?></strong></span></p>
+        <p><span>Conta-Corrente: <strong><?php echo $instructions_beneficiary_account ?></strong></span></p>
+        <p><span>Favorecido: <strong><?php echo $instructions_beneficiary_name ?></strong></span></p>
+        <p><span>Valor: <strong>R$ <?php echo $amount ?></strong></span></p>
+    </div>
+<?php else: ?>
+    <span><?php echo __($this->getTitle()) ?></span>
+<?php endif ?>
