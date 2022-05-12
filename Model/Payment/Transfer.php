@@ -90,6 +90,7 @@ class Transfer extends \Magento\Payment\Model\Method\AbstractMethod
         $bank           = $this->getInfoInstance()->getAdditionalInformation('transfer_bank');
         $agencia        = $this->getInfoInstance()->getAdditionalInformation('transfer_branch');
         $conta          = $this->getInfoInstance()->getAdditionalInformation('transfer_account');
+        $observation    = $this->_helper->getPaymeeObservation();
 
         $paymentMethod  = $this->_helper->getBanco($bank);
 
@@ -116,7 +117,8 @@ class Transfer extends \Magento\Payment\Model\Method\AbstractMethod
                     "branch"    => $agencia,
                     "account"   => $conta,
                 )
-            )
+            ),
+            "observation" => $observation
         );
 
         $this->_helper->logs("--- Payee Transfer Data ----");

@@ -27,5 +27,10 @@
             <label>Paymee Token</label>
             <config_path>payment/paymee_preferences/token</config_path>
         </field>
+        <field id="observation" translate="label comment" type="text" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="0">
+            <label>Observation</label>
+            <config_path>payment/paymee_preferences/observation</config_path>
+            <comment><![CDATA[Envie um valor na observação dos pedidos (Ex: Nome da Minha Loja)]]></comment>
+        </field>
     </group>
 </include>

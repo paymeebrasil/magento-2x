@@ -64,6 +64,10 @@ class Data extends AbstractHelper
         return $this->scopeConfig->getValue('payment/paymee_preferences/token', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
+    public function getPaymeeObservation() {
+        return $this->scopeConfig->getValue('payment/paymee_preferences/observation', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
+
     public function getPaymeeTransferBanks() {
         $banks['001'] = '001 - Banco do Brasil S.A';
         $banks['237'] = '237 - Banco Bradesco S.A';

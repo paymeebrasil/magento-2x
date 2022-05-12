@@ -70,6 +70,7 @@ class Pix extends \Magento\Payment\Model\Method\AbstractMethod
         $grandTotal     = round($order->getGrandTotal(), 2);
         $referenceCode  = $order->getIncrementId();
         $maxAge         = $this->_helper->getPaymeePixMaxage();
+        $observation    = $this->_helper->getPaymeeObservation();
 
         $_data = array(
             "currency"      => "BRL",
@@ -90,7 +91,8 @@ class Pix extends \Magento\Payment\Model\Method\AbstractMethod
                     "type"      => "MOBILE",
                     "number"    => $phone,
                 ),
-            )
+            ),
+            "observation" => $observation
         );
 
         $this->_helper->logs("--- Payee Pix Data ----");
