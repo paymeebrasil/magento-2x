@@ -149,6 +149,7 @@ class Index extends AbstractNotification
             if ($order->canInvoice()) {
                 $invoice = $this->invoiceService->prepareInvoice($order);
                 $invoice->register();
+                $invoice->pay(); //fatura como PAID
                 $invoice->save();
 
                 $transactionSave =
