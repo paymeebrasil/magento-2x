@@ -1,0 +1,19 @@
+{
+    "name": "paymee/magento2",
+    "description": "Paymee API Magento 2 Integration",
+    "keywords": ["paymee", "pix", "gateway", "magento2"],
+    "type": "library",
+    "authors": [
+        {
+            "name": "Paymee",
+            "email": "suporte@paymee.com.br"
+        }
+    ],
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
+    "require": {
+        "php": ">=5.5"
+    }
+}
