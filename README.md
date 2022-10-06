@@ -35,8 +35,8 @@ Banks:
     $ php bin/magento setup:static-content:deploy -f
     $ php bin/magento cache:clean;
     $ php bin/magento cache:flush; 
-    
-## Instalation
+
+## Instalation via Upload 
     Download files from this repository
     Create in your store root the folder: app/code/Paymee/Core/
     Paste all files and folders 
