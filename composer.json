@@ -1,8 +1,8 @@
 {
-    "name": "paymee/core",
+    "name": "Paymee/Core",
     "description": "Paymee API Magento 2 Integration",
     "keywords": ["paymee", "pix", "gateway", "magento2"],
-    "type": "library",
+    "type": "magento2-module",
     "authors": [
         {
             "name": "Paymee",
@@ -15,5 +15,11 @@
     ],
     "require": {
         "php": ">=5.5"
+    },
+    "autoload": {
+      "files": [ "registration.php" ],
+      "psr-4": {
+        "Paymee\\Core\\": ""
+      }
     }
 }
