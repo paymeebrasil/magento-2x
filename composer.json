@@ -1,5 +1,5 @@
 {
-    "name": "paymee/magento2",
+    "name": "paymee/core",
     "description": "Paymee API Magento 2 Integration",
     "keywords": ["paymee", "pix", "gateway", "magento2"],
     "type": "library",
