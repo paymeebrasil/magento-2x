@@ -28,7 +28,7 @@ Banks:
 
     After run:
 
-    $ composer require paymee/magento2
+    $ composer require paymee/core
     $ rm -rf pub/static/*
     $ php bin/magento setup:upgrade;
     $ php bin/magento setup:di:compile;
