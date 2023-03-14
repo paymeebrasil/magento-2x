@@ -36,18 +36,25 @@ class Checkout implements ConfigProviderInterface
         $boleto_instructions    = $_helper->getPaymeeBoletoInstructions();
         $transfer_instructions  = $_helper->getPaymeeTransferInstructions();
         $transfer_banks         = $_helper->getPaymeeTransferBanks();
+        $fieldCpf               = false;
+
+        if ($_helper->getPaymeeFieldCpf() == 'paymee') {
+            $fieldCpf = true;
+        }
 
         return [
             'payment' => [
                 self::PAYMEE_METHOD_PIX_CODE => [
-                    'instructions'  => $pix_instructions
+                    'instructions'  => $pix_instructions,
+                    'fieldCpf'      => $fieldCpf
                 ],
                 self::PAYMEE_METHOD_BOLETO_CODE => [
                     'instructions'  => $boleto_instructions
                 ],
                 self::PAYMEE_METHOD_TRANSFER_CODE => [
                     'instructions'  => $transfer_instructions,
-                    'banks'         => $transfer_banks
+                    'banks'         => $transfer_banks,
+                    'fieldCpf'      => $fieldCpf
                 ]
             ]
         ];

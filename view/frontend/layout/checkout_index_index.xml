@@ -24,13 +24,13 @@
                                                                     <item name="component" xsi:type="string">Paymee_Core/js/view/payment/payments</item>
                                                                     <item name="methods" xsi:type="array">
                                                                         <item name="paymee_pix" xsi:type="array">
-                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
+                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">false</item>
                                                                         </item>
                                                                         <item name="paymee_boleto" xsi:type="array">
-                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
+                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">false</item>
                                                                         </item>
                                                                         <item name="paymee_transfer" xsi:type="array">
-                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
+                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">false</item>
                                                                         </item>
                                                                     </item>
                                                                 </item>

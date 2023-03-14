@@ -32,5 +32,18 @@
             <config_path>payment/paymee_preferences/observation</config_path>
             <comment><![CDATA[Envie um valor na observação dos pedidos (Ex: Nome da Minha Loja)]]></comment>
         </field>
+        <field id="cpf" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+            <label>Checkout CPF</label>
+            <config_path>payment/paymee_preferences/cpf</config_path>
+            <source_model>Paymee\Core\Model\Config\Source\Cpf</source_model>
+            <tooltip>
+                <![CDATA[<ul>Escolha em qual campo do checkout que o módulo irá ler o cpf do cliente:
+                            Billing: ler o vat_id do endereço de cobrança<br />
+                            Shipping: ler o vat_id do endereço de entrega<br />
+                            Customer: ler o taxvat no cadastro do cliente<br />
+                            Paymee Cpf: irá inserir um campo CPF em cada método de pagamento<br />
+                        </ul>]]>
+            </tooltip>
+        </field>
     </group>
 </include>

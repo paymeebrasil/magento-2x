@@ -73,6 +73,11 @@ class Data extends AbstractHelper
         return $this->scopeConfig->getValue('payment/paymee_preferences/environment', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
+    public function getPaymeeFieldCpf()
+    {
+        return $this->scopeConfig->getValue('payment/paymee_preferences/cpf', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
+
     public function getPaymeeKey()
     {
         return $this->scopeConfig->getValue('payment/paymee_preferences/key', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
@@ -138,6 +143,15 @@ class Data extends AbstractHelper
         }
 
         return $banco;
+    }
+
+    public function checkVersionMagento23Less() {
+        $objectManager      = \Magento\Framework\App\ObjectManager::getInstance();
+        $productMetadata    = $objectManager->get('Magento\Framework\App\ProductMetadataInterface');
+        $version            = $productMetadata->getVersion();
+        if (version_compare($version, '2.4', '<')) {
+            return true;
+        } return false;
     }
 
     public function logs($message, $name = "paymee")

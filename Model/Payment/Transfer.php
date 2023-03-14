@@ -2,6 +2,7 @@
 
 namespace Paymee\Core\Model\Payment;
 
+use Magento\Checkout\Model\Session as CheckoutSession;
 use Paymee\Core\Model\Api;
 
 class Transfer extends \Magento\Payment\Model\Method\AbstractMethod
@@ -17,6 +18,7 @@ class Transfer extends \Magento\Payment\Model\Method\AbstractMethod
     protected $_infoBlockType = 'Paymee\Core\Block\Payment\Info\Transfer';
     protected $_urlInterface;
     protected $_customerRepositoryInterface;
+    protected $_checkoutSession;
 
     public function __construct(
         \Magento\Framework\Model\Context $context,
@@ -28,7 +30,8 @@ class Transfer extends \Magento\Payment\Model\Method\AbstractMethod
         \Magento\Payment\Model\Method\Logger $logger,
         \Magento\Checkout\Model\Cart $cart,
         \Magento\Framework\UrlInterface $urlInterface,
-        \Magento\Customer\Api\CustomerRepositoryInterface $customerRepositoryInterface
+        \Magento\Customer\Api\CustomerRepositoryInterface $customerRepositoryInterface,
+        CheckoutSession $checkoutSession
     ) {
         parent::__construct(
             $context,
@@ -45,6 +48,7 @@ class Transfer extends \Magento\Payment\Model\Method\AbstractMethod
         $this->_customerRepositoryInterface = $customerRepositoryInterface;
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $this->_helper = $objectManager->create('Paymee\Core\Helper\Data');
+        $this->_checkoutSession = $checkoutSession;
     }
 
     public function assignData(\Magento\Framework\DataObject $data)
@@ -66,17 +70,43 @@ class Transfer extends \Magento\Payment\Model\Method\AbstractMethod
 
     public function initialize($paymentAction, $stateObject)
     {
-        $payment    = $this->getInfoInstance();
-        $order      = $payment->getOrder();
-        $cpf        = $order->getBillingAddress()->getVatId(); //campo vat_id do billingAddress
+        $quote      = $this->_checkoutSession->getQuote();
+        $order      = $this->getInfoInstance()->getOrder();
         $customerId = $order->getCustomerId();
-
-        $this->_helper->logs("--- Payee Transfer ----");
-        $this->_helper->logs("cpf: {$cpf}");
 
         if (isset($customerId)) {
             $_customer      = $this->_customerRepositoryInterface->getById($customerId);
             $customerId     = ($_customer->getId() !== null) ? $_customer->getId() : $customerId;
+        }
+
+        if ($this->_helper->checkVersionMagento23Less()) {
+            $order->setCanSendNewEmailFlag(false);
+        }
+
+        $payment = $order->getPayment();
+
+        $fieldCpf = $this->_helper->getPaymeeFieldCpf();
+        switch ($fieldCpf) {
+            case 'billing':
+                $cpf = $order->getBillingAddress()->getVatId();
+                break;
+            case 'shipping':
+                $cpf = $order->getShippingAddress()->getVatId();
+                break;
+            case 'customer':
+                $cpf = $this->_helper->logs($order->getData('customer_taxvat'));
+                break;
+            case 'paymee':
+                $cpf = $this->getInfoInstance()->getAdditionalInformation('transfer_cpf');
+                break;
+        }
+
+        $this->_helper->logs("--- Payee Pix ----");
+        $this->_helper->logs("field cpf: {$fieldCpf}");
+        $this->_helper->logs("cpf: {$cpf}");
+
+        if (!$cpf || $cpf == null) {
+            throw new \Magento\Framework\Exception\LocalizedException(__('O campo CPF não está preenchido'));
         }
 
         $firstName      = $order->getData('customer_firstname');

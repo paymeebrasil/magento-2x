@@ -79,6 +79,27 @@
                     " />
                     </div>
                 </div>
+
+                <!-- ko if: displayCpf() -->
+                <div class="field _required">
+                    <label data-bind="attr: {for: getCode() + '_cpf'}" class="label">
+                        <span><!-- ko i18n: 'CPF' --><!-- /ko --></span>
+                    </label>
+
+                    <div class="control">
+                        <input class="input-text required" name="payment[transfer_cpf]"
+                               type="text"
+                               placeholder="Informe seu CPF"
+                               data-bind="attr: {
+                            id: getCode() + '_cpf',
+                            'data-container': getCode() + '_cpf',
+                            'data-validate': JSON.stringify({'required':true})},
+                            enable: true,
+                            valueUpdate: 'input'
+                    " />
+                    </div>
+                </div>
+                <!-- /ko -->
             </fieldset>
         </form>
 
