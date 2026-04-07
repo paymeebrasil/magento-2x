@@ -14,12 +14,13 @@
         "AFL-3.0"
     ],
     "require": {
-        "php": ">=5.5"
+        "php": ">=8.2",
+        "magento/framework": ">=103.0.0"
     },
     "autoload": {
-      "files": [ "registration.php" ],
-      "psr-4": {
-        "Paymee\\Core\\": ""
-      }
+        "files": ["registration.php"],
+        "psr-4": {
+            "Paymee\\Core\\": ""
+        }
     }
 }

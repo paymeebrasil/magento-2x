@@ -2,61 +2,54 @@
 
 namespace Paymee\Core\Model\Provider;
 
-use \Magento\Checkout\Model\ConfigProviderInterface;
+use Magento\Checkout\Model\ConfigProviderInterface;
 
 class Checkout implements ConfigProviderInterface
 {
+    const PAYMEE_METHOD_PIX_CODE      = 'paymee_pix';
+    const PAYMEE_METHOD_BOLETO_CODE   = 'paymee_boleto';
+    const PAYMEE_METHOD_TRANSFER_CODE = 'paymee_transfer';
 
     protected $_checkoutSession;
     protected $_scopeConfig;
     protected $_storeManager;
-
-    const PAYMEE_METHOD_PIX_CODE         = 'paymee_pix';
-    const PAYMEE_METHOD_BOLETO_CODE      = 'paymee_boleto';
-    const PAYMEE_METHOD_TRANSFER_CODE    = 'paymee_transfer';
+    protected $_helper;
 
     public function __construct(
-        \Magento\Framework\App\Action\Context $context,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Checkout\Model\Session $checkoutSession,
-        \Magento\Store\Model\StoreManagerInterface $storeManager
-    )
-    {
-        $this->_scopeConfig = $scopeConfig;
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Paymee\Core\Helper\Data $helper
+    ) {
+        $this->_scopeConfig     = $scopeConfig;
         $this->_checkoutSession = $checkoutSession;
-        $this->_storeManager = $storeManager;
+        $this->_storeManager    = $storeManager;
+        $this->_helper          = $helper;
     }
 
-    public function getConfig()
+    public function getConfig(): array
     {
-        $objectManager  = \Magento\Framework\App\ObjectManager::getInstance();
-        $_helper        = $objectManager->create('Paymee\Core\Helper\Data');
-
-        $pix_instructions       = $_helper->getPaymeePixInstructions();
-        $boleto_instructions    = $_helper->getPaymeeBoletoInstructions();
-        $transfer_instructions  = $_helper->getPaymeeTransferInstructions();
-        $transfer_banks         = $_helper->getPaymeeTransferBanks();
-        $fieldCpf               = false;
-
-        if ($_helper->getPaymeeFieldCpf() == 'paymee') {
-            $fieldCpf = true;
-        }
+        $pixInstructions      = $this->_helper->getPaymeePixInstructions();
+        $boletoInstructions   = $this->_helper->getPaymeeBoletoInstructions();
+        $transferInstructions = $this->_helper->getPaymeeTransferInstructions();
+        $transferBanks        = $this->_helper->getPaymeeTransferBanks();
+        $fieldCpf             = $this->_helper->getPaymeeFieldCpf() === 'paymee';
 
         return [
             'payment' => [
                 self::PAYMEE_METHOD_PIX_CODE => [
-                    'instructions'  => $pix_instructions,
-                    'fieldCpf'      => $fieldCpf
+                    'instructions' => $pixInstructions,
+                    'fieldCpf'     => $fieldCpf,
                 ],
                 self::PAYMEE_METHOD_BOLETO_CODE => [
-                    'instructions'  => $boleto_instructions
+                    'instructions' => $boletoInstructions,
                 ],
                 self::PAYMEE_METHOD_TRANSFER_CODE => [
-                    'instructions'  => $transfer_instructions,
-                    'banks'         => $transfer_banks,
-                    'fieldCpf'      => $fieldCpf
-                ]
-            ]
+                    'instructions' => $transferInstructions,
+                    'banks'        => $transferBanks,
+                    'fieldCpf'     => $fieldCpf,
+                ],
+            ],
         ];
     }
 }

@@ -1,8 +1,8 @@
 <?php
+
 namespace Paymee\Core\Block\Checkout;
 
-class Success
-    extends \Magento\Framework\View\Element\Template
+class Success extends \Magento\Framework\View\Element\Template
 {
     protected $_orderFactory;
     protected $_checkoutSession;
@@ -17,16 +17,12 @@ class Success
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\Pricing\Helper\Data $pricingHelper,
         array $data = []
-    )
-    {
-        $this->_orderFactory = $orderFactory;
+    ) {
+        $this->_orderFactory   = $orderFactory;
         $this->_checkoutSession = $checkoutSession;
-        $this->_scopeConfig = $scopeConfig;
-        $this->_pricingHelper = $pricingHelper;
-        parent::__construct(
-            $context,
-            $data
-        );
+        $this->_scopeConfig    = $scopeConfig;
+        $this->_pricingHelper  = $pricingHelper;
+        parent::__construct($context, $data);
 
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $this->_helper = $objectManager->create('Paymee\Core\Helper\Data');
@@ -39,10 +35,7 @@ class Success
      */
     public function getPayment()
     {
-        $order = $this->getOrder();
-        $payment = $order->getPayment();
-
-        return $payment;
+        return $this->getOrder()->getPayment();
     }
 
     /**
@@ -51,19 +44,25 @@ class Success
     public function getOrder()
     {
         $orderIncrementId = $this->_checkoutSession->getLastRealOrderId();
-        $order = $this->_orderFactory->create()->loadByIncrementId($orderIncrementId);
-
-        return $order;
-    }
-
-    public function getOrderTotalCurrency() {
-        return $this->_pricingHelper->currency($this->getOrder()->getGrandTotal(),true,false);
+        return $this->_orderFactory->create()->loadByIncrementId($orderIncrementId);
     }
 
     /**
-     * @return float|string
+     * Returns formatted grand total with currency symbol.
      */
-    public function getTotal()
+    public function getOrderTotalCurrency(): string
+    {
+        return (string)$this->_pricingHelper->currency(
+            $this->getOrder()->getGrandTotal(),
+            true,
+            false
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public function getTotal(): string
     {
         $order = $this->getOrder();
         $total = $order->getBaseGrandTotal();
@@ -72,13 +71,11 @@ class Success
             $total = $order->getBasePrice() + $order->getBaseShippingAmount();
         }
 
-        $total = number_format($total, 2, '.', '');
-
-        return $total;
+        return number_format((float)$total, 2, '.', '');
     }
 
     /**
-     * @return mixed
+     * @return int|null
      */
     public function getEntityId()
     {
@@ -89,63 +86,34 @@ class Success
      * @return string
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function getPaymentMethod()
+    public function getPaymentMethod(): string
     {
-        $payment_method = $this->getPayment()->getMethodInstance()->getCode();
-
-        return $payment_method;
+        return $this->getPayment()->getMethodInstance()->getCode();
     }
 
     /**
-     * @return array
-     */
-    public function getInfoPayment()
-    {
-        $order_id = $this->_checkoutSession->getLastRealOrderId();
-        $info_payments = $this->_coreFactory->create()->getInfoPaymentByOrder($order_id);
-
-        return $info_payments;
-    }
-
-    /**
-     * Return a message to show in success page
-     *
-     * @param object  $payment
-     *
      * @return string
      */
-    public function getMessageByStatus($payment)
+    public function getOrderUrl(): string
     {
-        $status = $payment['status'] != "" ? $payment['status'] : '';
-        $status_detail = $payment['status_detail'] != "" ? $payment['status_detail'] : '';
-        $payment_method = $payment['payment_method_id'] != "" ? $payment['payment_method_id'] : '';
-        $amount = $payment['transaction_amount'] != "" ? $payment['transaction_amount'] : '';
-        $installments = $payment['installments'] != "" ? $payment['installments'] : '';
-
-        return $this->_coreFactory->create()->getMessageByStatus($status, $status_detail, $payment_method, $installments, $amount);
+        $params = ['order_id' => $this->_checkoutSession->getLastRealOrder()->getId()];
+        return $this->_urlBuilder->getUrl('sales/order/view', $params);
     }
 
     /**
-     * Return a url to go to order detail page
-     *
      * @return string
      */
-    public function getOrderUrl()
+    public function getReOrderUrl(): string
     {
         $params = ['order_id' => $this->_checkoutSession->getLastRealOrder()->getId()];
-        $url = $this->_urlBuilder->getUrl('sales/order/view', $params);
-
-        return $url;
+        return $this->_urlBuilder->getUrl('sales/order/reorder', $params);
     }
 
-    public function getReOrderUrl(){
-        $params = ['order_id' => $this->_checkoutSession->getLastRealOrder()->getId()];
-        $url = $this->_urlBuilder->getUrl('sales/order/reorder', $params);
-        return $url;
-    }
-
-    public function getPaymeeUrlPixStatus()
+    /**
+     * @return string
+     */
+    public function getPaymeeUrlPixStatus(): string
     {
-        return $this->getUrl("paymee/statuspix/");
+        return $this->getUrl('paymee/statuspix/');
     }
 }

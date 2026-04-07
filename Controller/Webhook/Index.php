@@ -3,85 +3,104 @@
 namespace Paymee\Core\Controller\Webhook;
 
 use Magento\Framework\App\Action\Context;
+use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Sales\Api\InvoiceRepositoryInterface;
 use Magento\Sales\Model\OrderFactory;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Service\InvoiceService;
-use Magento\Framework\DB\Transaction;
+use Magento\Framework\DB\TransactionFactory;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 use Paymee\Core\Controller\AbstractNotification;
 use Paymee\Core\Model\Api;
 
 class Index extends AbstractNotification
 {
-
     protected $_helper;
     protected $orderFactory;
+    protected $orderRepository;
     protected $invoiceService;
-    protected $transaction;
+    protected $invoiceRepository;
+    protected $transactionFactory;
     protected $invoiceSender;
 
     public function __construct(
         Context $context,
         OrderFactory $orderFactory,
+        OrderRepositoryInterface $orderRepository,
         InvoiceService $invoiceService,
+        InvoiceRepositoryInterface $invoiceRepository,
         InvoiceSender $invoiceSender,
-        Transaction $transaction
-    )
-    {
-        $this->orderFactory    = $orderFactory;
-        $this->invoiceService   = $invoiceService;
-        $this->transaction      = $transaction;
-        $this->invoiceSender    = $invoiceSender;
+        TransactionFactory $transactionFactory
+    ) {
+        $this->orderFactory       = $orderFactory;
+        $this->orderRepository    = $orderRepository;
+        $this->invoiceService     = $invoiceService;
+        $this->invoiceRepository  = $invoiceRepository;
+        $this->transactionFactory = $transactionFactory;
+        $this->invoiceSender      = $invoiceSender;
 
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $this->_helper = $objectManager->create('Paymee\Core\Helper\Data');
+
         parent::__construct($context);
     }
 
     /**
-     * Action to receive webhook from IoPay API
-     * Controller /iopay/webhook/
+     * Webhook endpoint called by Paymee API when payment status changes.
+     * Route: paymee/webhook/
      */
     public function execute()
     {
-        $data = json_decode(file_get_contents("php://input"), true);
+        $rawBody = file_get_contents('php://input');
+        $data    = json_decode($rawBody, true);
 
         $this->_helper->logs('--- Paymee Webhook ----');
         $this->_helper->logs($data);
 
-        if (
-            $data['newStatus'] &&
-            $data['referenceCode'])
-        {
-            $orderIncrementId   = $data['referenceCode'];
-            //$status             = $data['newStatus'];
-            $saleToken          = $data['saleToken'];
+        $resultJson = $this->resultFactory->create(
+            \Magento\Framework\Controller\ResultFactory::TYPE_JSON
+        );
 
-            $api = new Api();
-            $api->setUri("/v1.1/transactions/{$saleToken}");
-            $api->connect(false);
+        if (empty($data['newStatus']) || empty($data['referenceCode'])) {
+            $this->_helper->logs('Paymee Webhook: missing required fields');
+            return $resultJson->setHttpResponseCode(400)->setData(['error' => 'Missing required fields']);
+        }
 
-            $response = $api->getResponse();
-            $this->_helper->logs($response);
+        $orderIncrementId = $data['referenceCode'];
+        $saleToken        = $data['saleToken'] ?? null;
 
-            if ($response['message'] == 'success') {
-                $status = $response['situation'];
-                try {
-                    $order = $this->orderFactory->create()->loadByIncrementId($orderIncrementId);
-                    if ($order->getId()) {
-                        $this->changeOrderStatus($order, $status);
-                        http_response_code(200);
-                    } else {
-                        $this->_helper->logs("Paymee Webhook: order {$orderIncrementId} not found.");
-                        echo "Paymee Webhook: order {$orderIncrementId} not found.";
-                    }
-                } catch(Exception $e) {
-                    $this->_helper->logs($e->getMessage());
-                    http_response_code(400);
-                }
-            } else {
-                var_dump($response);
+        if (!$saleToken) {
+            return $resultJson->setHttpResponseCode(400)->setData(['error' => 'Missing saleToken']);
+        }
+
+        $api = new Api();
+        $api->setUri("/v1.1/transactions/{$saleToken}");
+        $api->connect(false);
+
+        $response = $api->getResponse();
+        $this->_helper->logs($response);
+
+        if (!isset($response['message']) || $response['message'] !== 'success') {
+            return $resultJson->setHttpResponseCode(400)->setData(['error' => 'API verification failed']);
+        }
+
+        $status = $response['situation'] ?? null;
+
+        try {
+            $order = $this->orderFactory->create()->loadByIncrementId($orderIncrementId);
+
+            if (!$order->getId()) {
+                $this->_helper->logs("Paymee Webhook: order {$orderIncrementId} not found.");
+                return $resultJson->setHttpResponseCode(404)->setData(['error' => 'Order not found']);
             }
+
+            $this->changeOrderStatus($order, $status);
+
+            return $resultJson->setHttpResponseCode(200)->setData(['success' => true]);
+
+        } catch (\Exception $e) {
+            $this->_helper->logs($e->getMessage());
+            return $resultJson->setHttpResponseCode(500)->setData(['error' => $e->getMessage()]);
         }
     }
 
@@ -90,44 +109,50 @@ class Index extends AbstractNotification
         $this->_helper->logs(
             "Paymee Webhook: order {$order->getIncrementId()} changing status to {$status}"
         );
-        try {
-            $orderStateProcessing = Order::STATE_PROCESSING;
 
-            /* Check webhook status return */
+        try {
             switch ($status) {
                 case 'PAID':
-                    $order->setState($orderStateProcessing)->setStatus($orderStateProcessing);
-                    $order->save();
+                    $order->setState(Order::STATE_PROCESSING)
+                          ->setStatus(Order::STATE_PROCESSING);
+                    $this->orderRepository->save($order);
+
                     if ($this->_helper->getPaymeeAutoInvoice()) {
                         $this->invoiceOrder($order);
                     }
                     break;
+
                 case 'CANCELLED':
                 case 'failed':
                 case 'charged_back':
                     $this->cancelOrder($order);
                     break;
+
                 default:
+                    $this->_helper->logs("Paymee Webhook: unhandled status {$status}");
                     break;
             }
 
             return true;
 
-        } catch(Exception $e) {
+        } catch (\Exception $e) {
             $this->_helper->logs($e->getMessage());
+            throw $e;
         }
     }
 
     public function cancelOrder($order)
     {
         try {
-            $this->_helper->logs("Paymee Webhook: cancelling order {$order->getIncrementId()} ");
-            if ($order->canCancel()) {
-                $order->cancel()->save();
+            $this->_helper->logs("Paymee Webhook: cancelling order {$order->getIncrementId()}");
 
-                $order->addCommentToStatusHistory(
+            if ($order->canCancel()) {
+                $order->cancel();
+                $history = $order->addCommentToStatusHistory(
                     __("Paymee: canceled order {$order->getIncrementId()}")
-                )->setIsCustomerNotified(true)->save();
+                );
+                $history->setIsCustomerNotified(true);
+                $this->orderRepository->save($order);
 
                 $this->_helper->logs("Paymee Webhook: order {$order->getIncrementId()} canceled");
             } else {
@@ -136,44 +161,45 @@ class Index extends AbstractNotification
 
             return true;
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->_helper->logs($e->getMessage());
+            throw $e;
         }
     }
 
     public function invoiceOrder($order)
     {
         try {
-            $this->_helper->logs("Paymee Webhook: generating invoice from order {$order->getIncrementId()} ");
+            $this->_helper->logs("Paymee Webhook: generating invoice from order {$order->getIncrementId()}");
 
             if ($order->canInvoice()) {
                 $invoice = $this->invoiceService->prepareInvoice($order);
                 $invoice->register();
-                $invoice->pay(); //fatura como PAID
-                $invoice->save();
+                $invoice->pay();
 
-                $transactionSave =
-                    $this->transaction
-                        ->addObject($invoice)
-                        ->addObject($invoice->getOrder());
-                $transactionSave->save();
+                $this->invoiceRepository->save($invoice);
 
-                //$this->invoiceSender->send($invoice);
+                $transaction = $this->transactionFactory->create();
+                $transaction->addObject($invoice)
+                            ->addObject($invoice->getOrder())
+                            ->save();
 
-                $order->addCommentToStatusHistory(
+                $history = $order->addCommentToStatusHistory(
                     __("Paymee: Auto invoiced order {$order->getIncrementId()}")
-                )->setIsCustomerNotified(true)->save();
+                );
+                $history->setIsCustomerNotified(true);
+                $this->orderRepository->save($order);
 
                 $this->_helper->logs("Paymee Webhook: order {$order->getIncrementId()} invoiced successfully");
-
             } else {
                 $this->_helper->logs("Paymee Webhook: cannot invoice order {$order->getIncrementId()}");
             }
 
             return true;
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->_helper->logs($e->getMessage());
+            throw $e;
         }
     }
 }

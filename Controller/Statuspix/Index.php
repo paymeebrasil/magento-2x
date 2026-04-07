@@ -3,41 +3,26 @@
 namespace Paymee\Core\Controller\Statuspix;
 
 use Magento\Framework\App\Action\Context;
-use Magento\Sales\Model\OrderFactory;
-use Magento\Sales\Model\Order;
-use Magento\Sales\Model\Service\InvoiceService;
-use Magento\Framework\DB\Transaction;
-use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 use Paymee\Core\Controller\AbstractNotification;
 use Paymee\Core\Model\Api;
 
 class Index extends AbstractNotification
 {
-
     protected $_helper;
-    protected $orderFactory;
-    protected $invoiceService;
-    protected $transaction;
-    protected $invoiceSender;
 
     public function __construct(
-        Context        $context,
-        OrderFactory   $orderFactory,
-        InvoiceService $invoiceService,
-        InvoiceSender  $invoiceSender,
-        Transaction    $transaction
-    )
-    {
-        $this->orderFactory = $orderFactory;
-        $this->invoiceService = $invoiceService;
-        $this->transaction = $transaction;
-        $this->invoiceSender = $invoiceSender;
-
+        Context $context
+    ) {
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $this->_helper = $objectManager->create('Paymee\Core\Helper\Data');
         parent::__construct($context);
     }
 
+    /**
+     * Check PIX payment status by UUID.
+     * Called via AJAX from the success page to poll payment status.
+     * Route: paymee/statuspix/
+     */
     public function execute()
     {
         $uuid = $this->getRequest()->getParam('uuid');
@@ -45,17 +30,34 @@ class Index extends AbstractNotification
         $this->_helper->logs('--- Paymee Check Pix Status ----');
         $this->_helper->logs($uuid);
 
-        $api = new Api();
-        $api->setUri("/v1.1/transactions/{$uuid}");
-        $api->connect(false);
+        $resultJson = $this->resultFactory->create(
+            \Magento\Framework\Controller\ResultFactory::TYPE_JSON
+        );
 
-        $response = $api->getResponse();
-        $this->_helper->logs($response);
+        if (!$uuid) {
+            return $resultJson->setHttpResponseCode(400)->setData(['error' => 'Missing uuid']);
+        }
 
-        if ($response['message'] == 'success' && $response['situation'] == 'PAID') {
-            echo 'PAID';
-        } else {
-            var_dump($response);
+        try {
+            $api = new Api();
+            $api->setUri("/v1.1/transactions/{$uuid}");
+            $api->connect(false);
+
+            $response = $api->getResponse();
+            $this->_helper->logs($response);
+
+            if (isset($response['message']) && $response['message'] === 'success') {
+                return $resultJson->setData([
+                    'situation' => $response['situation'] ?? 'PENDING',
+                    'paid'      => ($response['situation'] ?? '') === 'PAID',
+                ]);
+            }
+
+            return $resultJson->setHttpResponseCode(400)->setData(['error' => 'API error']);
+
+        } catch (\Exception $e) {
+            $this->_helper->logs($e->getMessage());
+            return $resultJson->setHttpResponseCode(500)->setData(['error' => $e->getMessage()]);
         }
     }
 }

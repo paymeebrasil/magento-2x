@@ -30,7 +30,7 @@
             </paymee_boleto>
 
             <paymee_transfer>
-                <active>1</active>
+                <active>0</active>
                 <model>Paymee\Core\Model\Payment\Transfer</model>
                 <title>Paymee Transferência</title>
                 <order_status>pending_payment</order_status>
